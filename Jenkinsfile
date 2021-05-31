@@ -3,6 +3,9 @@ pipeline{
   agent any
   enviornment{
     NEW_VERSION = '1.O.3'
+    /*this need to be created Jenkins UI via Credentials plugin and Credentials binding plugin
+    /*this way the credentials are present in all the stages but if u want to use in only one stage see below
+    SEVER_CREDENTIALS = Credentials('sever_credentials')
   }
   stages{
     stage('git clone'){
@@ -20,6 +23,9 @@ pipeline{
         }
       steps{
         echo"building the code"
+        withCredentials([usernamePassword(credentials: 'sever_credentials', usernameVariable: USER, passwordVariable: PASS)]){
+            sh"${USER} ${PASS}"
+        }
       }
     }
     stage('deploy'){
@@ -29,8 +35,10 @@ pipeline{
             BRANCH_NAME == 'feature1' || BRANCH_NAME == 'master'
           }
         }
+
       steps{
         echo "deploy the code"
+        sh"ssh -i ${SEVER_CREDENTIALS}"
       }
     }
     post{
