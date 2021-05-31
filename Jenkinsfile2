@@ -1,0 +1,54 @@
+/*localhost:8080/env-vars.html/  this is where you can find all the enviornment provided by Jenkins itself
+def gv = load "script.groovy"
+pipeline{
+  agent any
+  tools{
+      maven 'Maven'
+  }
+  parmeters {
+      string(name: 'VERSION', defaultValue: '1.1', description: 'version to deploy on the prod')
+      choice(name: 'VERSION', choices:['1.10', '1.13', '1.14'], description: 'version to deploy')
+      booleanParam(name: 'executestage', defaultValue: true, description:'any description') 
+  }
+  stages{
+    stage('git clone'){
+      steps{
+        echo'cloning git library'
+      }
+    }
+    stage('build and test'){
+        when {
+            expression {
+                params.executestage == true
+            }
+        }
+      steps{
+        script {
+            gv.buildapp()
+        }
+        }
+      }
+    }
+    stage('deploy'){
+      steps{
+        echo "deploy the code"
+        echo"deploying version ${params.VERSION}"
+      }
+    }
+    
+  }
+}
+
+create a file called script.groovy
+
+def buildapp(){
+    def terr = 'path of terraform'
+    echo 'building applicaiton'
+
+}
+def testapp(){
+    def terr = 'path of terraform'
+    echo 'building applicaiton'
+
+}
+return this
