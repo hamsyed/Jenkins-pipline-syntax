@@ -1,0 +1,45 @@
+/* in this example ihave configure java path in "manage jenkins"-> "global tools config" ->"under JDK "name: JAVA" 
+/* and "PATH AS /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.282.b08-1.amzn2.0.1.x86_64"
+pipeline{
+    agent any
+        tools{
+            maven 'maven'
+        }
+        environment {
+          PATH="${PATH}:${getjava()}"    
+          VERSION = "1.1.1"
+        }
+        stages{
+            stage('git cloning'){
+                steps{
+                    git 'https://github.com/rahulshettyacademy/DevopsBasics'
+                    echo "branch cloned is ${JOB_NAME}"
+                }
+                
+            }
+            
+            stage('testing and build '){
+                steps{
+                    sh'mvn install test package'
+                    echo"version of package ${VERSION}"
+                    
+                }
+            }
+        }
+        post{
+            always{
+                echo'script started...!'
+            }
+            failure{
+                echo'job failed for some reason,,,!'
+            }
+            success{
+                echo'job completed successfuly'
+            }
+        }
+    }
+    
+    def getjava(){
+        def JAVA = tool name: 'JAVA', type: 'jdk'
+        return JAVA
+    }
